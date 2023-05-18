@@ -62,6 +62,26 @@ void getNext(int* next, const string& s){
         next[i] = j; // 将j（前缀的长度）赋给next[i]
     }
 }
+
+
+void getNext(const string &s, vector<int> &next)
+    {
+        //初始化
+        // j+1 是 i 之前(包括i)的字符串的最长公共前后缀长度 s[j+1]即为最长公共前后缀的前缀末尾
+        int j = -1; 
+        next[0] = j;
+
+        for(int i = 1; i < s.size(); ++i)   //遍历模式串s 为每个字符计算next数组的值
+        {//当前字符s[i](假设是公共后缀末尾)和s[j+1](假设公共前缀末尾)不匹配  j往前回退 
+            while(j+1 > 0 && s[i] != s[j+1]) 
+                j = next[j+1 - 1];
+            if(s[i] == s[j+1]) //r如果是因为匹配上了的原因退出循环 最长公共前后缀长度++
+                j++;
+            next[i] = j;
+        }
+    }
+    
+   
 ```
 
 ### 使用next数组来做匹配
@@ -115,7 +135,7 @@ if (j == (t.size() - 1) ) {
 ```cpp
 
 class Solution {
-public:
+public: 
     void getNext(int *next, const string s){//构造next前缀表
         int j = -1;//初始化j  前缀末尾
         next[0] = j;
@@ -221,6 +241,25 @@ public:
         return false;
 
     }
+    
+    
+    bool repeatedSubstringPattern(string s) {
+        string str = s + s;         //拼接两个s
+        vector<int> next(str.size());//构造str的next
+        getNext(str, next);
+        int max = next[str.size() - 1] + 1; //str的最长公共前后缀长度
+        //最长相等前后缀不包含的子串就是最小重复子串。
+        int len = str.size() - max;         //str中不在最长公共前后缀中的子串
+        //如果可以由一个子串重复多次构成 就可以整除这个字串的长度
+        if(s.size()%len==0 && s.size()/len > 1) 
+            return true;
+        else
+            return false;
+
+
+    }
+};
+
 };
 ```
 
